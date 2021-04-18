@@ -121,7 +121,7 @@ class PrepTime extends StatelessWidget {
     return Column(
       children: [
         Icon(
-          Icons.star,
+          Icons.time_to_leave,
         ),
       ],
     );
