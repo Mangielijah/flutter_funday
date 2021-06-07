@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_funday_1/logo.dart';
+import 'package:flutter_funday_1/skills_section.dart';
 import 'package:flutter_funday_1/text_input.dart';
 
 class Freelancer extends StatelessWidget {
@@ -82,6 +83,7 @@ class Freelancer extends StatelessWidget {
                                     subtitle:
                                         "Start with a bit about yourself or your business, and include an overview of what you need done.",
                                     hint: "Describe your project here ..."),
+                                SkillSection()
                               ],
                             ),
                           ),
