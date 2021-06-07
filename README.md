@@ -1,6 +1,6 @@
 # flutter_funday_1
 
-A new Flutter project.
+![Preview of app build](preview.png)
 
 ## Getting Started
 
