@@ -62,9 +62,9 @@ class TextInputWidget extends StatelessWidget {
               maxLines: 5,
               maxLength: 4000,
             ),
-          SizedBox(
-            height: 36,
-          ),
+          // SizedBox(
+          //   height: 36,
+          // ),
         ],
       ),
     );
