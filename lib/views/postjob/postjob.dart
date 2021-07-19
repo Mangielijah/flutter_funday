@@ -1,25 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_funday_1/list_state_notifier.dart';
+import 'package:flutter_funday_1/views/postjob/list_state_notifier.dart';
 import 'package:flutter_funday_1/logo.dart';
 import 'package:flutter_funday_1/next_button.dart';
-import 'package:flutter_funday_1/skills_section.dart';
+import 'package:flutter_funday_1/skill/skills_section.dart';
 import 'package:flutter_funday_1/strings.dart';
 import 'package:flutter_funday_1/text_input.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Freelancer extends StatefulWidget {
-  const Freelancer({Key key}) : super(key: key);
-
-  @override
-  _FreelancerState createState() => _FreelancerState();
-}
-
-class _FreelancerState extends State<Freelancer> {
-  // bool hideSkillSection = true;
-  // ValueNotifier<bool> choiceSection = ValueNotifier(false);
-  // List<String> state = [];
-
-  // ValueNotifier<bool> choiceSection = ValueNotifier(false);
+class PostJob extends StatelessWidget {
+  const PostJob({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -85,12 +74,15 @@ class _FreelancerState extends State<Freelancer> {
                             padding: EdgeInsets.all(36),
                             width: 900,
                             child: ListView(
-                              // crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextInputWidget(
-                                    textType: TextType.text,
-                                    title: Strings.appName,
-                                    hint: "e.g Build me a Website"),
+                                  textType: TextType.text,
+                                  title: Strings.whatDoYouWantBuild,
+                                  hint: "e.g Build me a Website",
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 TextInputWidget(
                                   textType: TextType.textarea,
                                   title: "Tell us more about your project",
@@ -98,78 +90,29 @@ class _FreelancerState extends State<Freelancer> {
                                       "Start with a bit about yourself or your business, and include an overview of what you need done.",
                                   hint: "Describe your project here ...",
                                 ),
-                                // Expanded(
-                                //   child: Container(
-                                //     child: Consumer(
-                                //         builder: (context, watch, child) {
-                                //       List<String> listState =
-                                //           watch(listStateProvider).state;
-                                //       return Column(
-                                //         crossAxisAlignment:
-                                //             CrossAxisAlignment.stretch,
-                                //         children: [
-                                //           (listState.isEmpty)
-                                //               ? NextButton(
-                                //                   sideText: Strings.ctrlEnter,
-                                //                   onTap: () {
-                                //                     // choiceSection.value = true;
-                                //                     setState(() {
-                                //                       listState.add("SKILLS");
-                                //                       listState.add("BUTTON2");
-                                //                     });
-                                //                   },
-                                //                 )
-                                //               : Container(),
-                                //           (listState.contains("SKILLS"))
-                                //               ? SkillSection()
-                                //               : Container(),
-                                //           (listState.contains("BUTTON2"))
-                                //               ? NextButton(
-                                //                   sideText: Strings.pressEnter,
-                                //                   onTap: () {
-                                //                     listState.remove("BUTTON2");
-                                //                     listState
-                                //                         .add("CHOICESECTION");
-                                //                     setState(() {});
-                                //                     // choiceSection.value = true;
-                                //                   },
-                                //                 )
-                                //               : Container(),
-                                //           if (listState
-                                //               .contains("CHOICESECTION"))
-                                //             Container(
-                                //               height: 200,
-                                //               color: Colors.red,
-                                //             ),
-                                //         ],
-                                //       );
-                                //     }),
-                                //   ),
-                                // ),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 Consumer(
-                                    child: NextButton(
-                                      sideText: Strings.ctrlEnter,
-                                      onTap: () {
-                                        // choiceSection.value = true;
-                                        // setState(() {
-                                        //   // state.add("SKILLS");
-                                        //   // state.add("BUTTON2");
-                                        // });
-                                        ListStateNotifier notifier = context
-                                            .read(listStateProvider.notifier);
-                                        List<String> tempState = notifier.state;
-                                        tempState.add("SKILLS");
-                                        tempState.add("BUTTON2");
-                                        notifier.state = [...tempState];
-                                      },
-                                    ),
-                                    builder: (context, watch, child) {
-                                      List<String> listState =
-                                          watch(listStateProvider);
-                                      return (listState.isEmpty)
-                                          ? child
-                                          : Container();
-                                    }),
+                                  child: NextButton(
+                                    sideText: Strings.ctrlEnter,
+                                    onTap: () {
+                                      ListStateNotifier notifier = context
+                                          .read(listStateProvider.notifier);
+                                      List<String> tempState = notifier.state;
+                                      tempState.add("SKILLS");
+                                      tempState.add("BUTTON2");
+                                      notifier.state = [...tempState];
+                                    },
+                                  ),
+                                  builder: (context, watch, child) {
+                                    List<String> listState =
+                                        watch(listStateProvider);
+                                    return (listState.isEmpty)
+                                        ? child
+                                        : Container();
+                                  },
+                                ),
                                 Consumer(
                                   child: SkillSection(),
                                   builder: (context, watch, child) {
@@ -180,14 +123,13 @@ class _FreelancerState extends State<Freelancer> {
                                         : Container();
                                   },
                                 ),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 Consumer(
                                   child: NextButton(
                                     sideText: Strings.pressEnter,
                                     onTap: () {
-                                      // state.remove("BUTTON2");
-                                      // state.add("CHOICESECTION");
-                                      // setState(() {});
-                                      // choiceSection.value = true;
                                       ListStateNotifier notifier = context
                                           .read(listStateProvider.notifier);
                                       List<String> tempState = notifier.state;
@@ -217,19 +159,6 @@ class _FreelancerState extends State<Freelancer> {
                                         : Container();
                                   },
                                 ),
-
-                                // ValueListenableBuilder<bool>(
-                                //   valueListenable: choiceSection,
-                                //   child: Container(
-                                //     height: 200,
-                                //     color: Colors.red,
-                                //   ),
-                                //   builder: (context, choice, child) {
-                                //     return !(choice || hideSkillSection)
-                                //         ? child
-                                //         : Container();
-                                //   },
-                                // )
                               ],
                             ),
                           ),
