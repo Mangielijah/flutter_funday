@@ -1,14 +1,17 @@
-import 'dart:io';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_funday_1/logo.dart';
+import 'package:flutter_funday_1/utils/authentication.dart';
 import 'package:flutter_funday_1/views/authentication/signup.dart';
+import 'package:flutter_funday_1/views/dashboard/dashboard.dart';
 import 'package:flutter_funday_1/widgets/button.dart';
 
 class LogIn extends StatelessWidget {
   LogIn({Key key}) : super(key: key);
   final ValueNotifier<bool> rememberMe = ValueNotifier(false);
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +62,16 @@ class LogIn extends StatelessWidget {
                 fontSize: 18,
                 textColor: Colors.black,
                 image: "google-logo.png",
+                onTap: () async {
+                  User user = await signInWithGoogle();
+                  if (user != null) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => Dashboard(),
+                      ),
+                    );
+                  }
+                },
               ),
               SizedBox(
                 height: 20,
@@ -75,6 +88,7 @@ class LogIn extends StatelessWidget {
                 height: 20,
               ),
               TextField(
+                controller: emailController,
                 maxLines: 1,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
@@ -91,6 +105,7 @@ class LogIn extends StatelessWidget {
                 height: 18,
               ),
               TextField(
+                controller: passwordController,
                 maxLines: 1,
                 keyboardType: TextInputType.text,
                 obscureText: true,
@@ -151,6 +166,22 @@ class LogIn extends StatelessWidget {
                 bgColor: Colors.blue,
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
+                onTap: () async {
+                  if (emailController.text != null &&
+                      passwordController.text != null) {
+                    User user = await signInWithEmailPassword(
+                      emailController.text.toString(),
+                      passwordController.text.toString(),
+                    );
+                    if (user != null) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Dashboard(),
+                        ),
+                      );
+                    }
+                  }
+                },
               ),
               SizedBox(
                 height: 20,

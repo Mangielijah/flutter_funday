@@ -36,8 +36,6 @@ Future getUser() async {
 /// Retrieves some general user related information
 /// from their Google account for ease of the login process
 Future<User> signInWithGoogle() async {
-  await Firebase.initializeApp();
-
   User user;
 
   if (kIsWeb) {
@@ -96,7 +94,6 @@ Future<User> signInWithGoogle() async {
 }
 
 Future<User> registerWithEmailPassword(String email, String password) async {
-  await Firebase.initializeApp();
   User user;
 
   try {
@@ -125,7 +122,6 @@ Future<User> registerWithEmailPassword(String email, String password) async {
 }
 
 Future<User> signInWithEmailPassword(String email, String password) async {
-  await Firebase.initializeApp();
   User user;
 
   try {
