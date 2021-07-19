@@ -1,11 +1,17 @@
+import 'dart:html';
+
 import 'package:badges/badges.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_funday_1/widgets/button.dart';
 import 'package:flutter_funday_1/widgets/header.dart';
 import 'package:csc_picker/csc_picker.dart';
 
 class JobDetial extends StatelessWidget {
   JobDetial({Key key}) : super(key: key);
 
+  final ValueNotifier<FilePickerResult> filePickerNotifier =
+      ValueNotifier(null);
   final ValueNotifier<Map<String, dynamic>> cscNotifier = ValueNotifier({});
 
   @override
@@ -329,40 +335,88 @@ class JobDetial extends StatelessWidget {
                                       height: 12,
                                     ),
                                     ValueListenableBuilder(
-                                        valueListenable: cscNotifier,
-                                        builder: (context, cscMap, _) {
-                                          return CSCPicker(
-                                            defaultCountry:
-                                                DefaultCountry.Cameroon,
-                                            onCountryChanged: (value) {
-                                              cscNotifier.value = {
-                                                "country": value,
-                                                "state": cscMap['state'],
-                                                "city": cscMap['city']
-                                              };
-                                            },
-                                            onStateChanged: (value) {
-                                              // setState(() {
-                                              //   stateValue = value;
-                                              // });
-                                              cscNotifier.value = {
-                                                "country": cscMap['country'],
-                                                "state": value,
-                                                "city": cscMap['city']
-                                              };
-                                            },
-                                            onCityChanged: (value) {
-                                              // setState(() {
-                                              //   cityValue = value;
-                                              // });
-                                              cscNotifier.value = {
-                                                "country": cscMap['country'],
-                                                "state": cscMap['city'],
-                                                "city": value,
-                                              };
-                                            },
-                                          );
-                                        }),
+                                      valueListenable: cscNotifier,
+                                      builder: (context, cscMap, _) {
+                                        return CSCPicker(
+                                          defaultCountry:
+                                              DefaultCountry.Cameroon,
+                                          onCountryChanged: (value) {
+                                            cscNotifier.value = {
+                                              "country": value,
+                                              "state": cscMap['state'],
+                                              "city": cscMap['city']
+                                            };
+                                          },
+                                          onStateChanged: (value) {
+                                            // setState(() {
+                                            //   stateValue = value;
+                                            // });
+                                            cscNotifier.value = {
+                                              "country": cscMap['country'],
+                                              "state": value,
+                                              "city": cscMap['city']
+                                            };
+                                          },
+                                          onCityChanged: (value) {
+                                            // setState(() {
+                                            //   cityValue = value;
+                                            // });
+                                            cscNotifier.value = {
+                                              "country": cscMap['country'],
+                                              "state": cscMap['city'],
+                                              "city": value,
+                                            };
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Button(
+                                          onTap: () {
+                                            getInput();
+                                          },
+                                          text: 'Input Cover Letter',
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        ValueListenableBuilder<
+                                            FilePickerResult>(
+                                          valueListenable: filePickerNotifier,
+                                          builder:
+                                              (context, filePickerResult, _) {
+                                            return (filePickerResult == null)
+                                                ? Text('')
+                                                : Container(
+                                                    padding:
+                                                        EdgeInsets.all(9.0),
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.grey[100]),
+                                                    child: Text(
+                                                      filePickerResult.names[0],
+                                                      style: TextStyle(
+                                                        color: Colors.blue,
+                                                        fontSize: 20.0,
+                                                        fontWeight:
+                                                            FontWeight.w100,
+                                                      ),
+                                                    ),
+                                                  );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 24,
+                                    ),
+                                    Button(text: 'Submit')
                                   ],
                                 ),
                               ),
@@ -388,5 +442,10 @@ class JobDetial extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  getInput() async {
+    filePickerNotifier.value = await FilePicker.platform.pickFiles();
+    // return result;
   }
 }
