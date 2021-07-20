@@ -7,6 +7,7 @@ import 'package:flutter_funday_1/views/authentication/signup.dart';
 import 'package:flutter_funday_1/views/jobs/joblist.dart';
 import 'package:flutter_funday_1/widgets/button.dart';
 import 'package:flutter_funday_1/widgets/header.dart';
+import 'package:multi_value_listenable_builder/multi_value_listenable_builder.dart';
 
 class Jobs extends StatelessWidget {
   final ValueNotifier<bool> fixedSalaryNotifier = ValueNotifier(false);
@@ -110,6 +111,269 @@ class Jobs extends StatelessWidget {
                                     Divider(),
                                     SizedBox(
                                       height: 18,
+                                    ), //Job Type Section
+                                    Text(
+                                      "Categories",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 18,
+                                    ),
+                                    Container(
+                                      height: 40.0 * categories.length,
+                                      child: ListView.builder(
+                                        itemCount: categories.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return
+                                              //Categories CheckBoxs
+                                              Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 6.0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                ValueListenableBuilder<
+                                                    List<int>>(
+                                                  valueListenable:
+                                                      categoryNotifier,
+                                                  builder: (context,
+                                                      categoriesId, _) {
+                                                    final categoryChecked =
+                                                        categoriesId
+                                                            .contains(index);
+                                                    return Checkbox(
+                                                      value: categoryChecked,
+                                                      onChanged: (isChecked) {
+                                                        if (isChecked) {
+                                                          categoryNotifier
+                                                              .value = [
+                                                            ...categoriesId,
+                                                            index
+                                                          ];
+                                                        } else {
+                                                          categoriesId
+                                                              .remove(index);
+
+                                                          categoryNotifier
+                                                              .value = [
+                                                            ...categoriesId
+                                                          ];
+                                                        }
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                                SizedBox(
+                                                  width: 4,
+                                                ),
+                                                Text(
+                                                  categories[index]
+                                                      .categoryName,
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    Divider(),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+
+                                    //Job Type Section
+                                    Text(
+                                      "Job Type",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 18,
+                                    ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        ValueListenableBuilder<List<String>>(
+                                          valueListenable: jobTypeNotifier,
+                                          builder: (context, jobTypes, _) {
+                                            final fullTimeChecked =
+                                                jobTypes.contains("fulltime");
+                                            return Checkbox(
+                                              value: fullTimeChecked,
+                                              onChanged: (isChecked) {
+                                                // final types =
+                                                //     jobTypeNotifier.value;
+                                                if (isChecked) {
+                                                  jobTypeNotifier.value = [
+                                                    ...jobTypes,
+                                                    "fulltime"
+                                                  ];
+                                                } else {
+                                                  jobTypes.remove('fulltime');
+
+                                                  jobTypeNotifier.value = [
+                                                    ...jobTypes
+                                                  ];
+                                                }
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text(
+                                          "Full Time",
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 6,
+                                    ),
+                                    //Part Time CheckBoxs
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        ValueListenableBuilder<List<String>>(
+                                          valueListenable: jobTypeNotifier,
+                                          builder: (context, jobTypes, _) {
+                                            final fullTimeChecked =
+                                                jobTypes.contains("parttime");
+                                            return Checkbox(
+                                              value: fullTimeChecked,
+                                              onChanged: (isChecked) {
+                                                // final types =
+                                                //     jobTypeNotifier.value;
+                                                if (isChecked) {
+                                                  jobTypeNotifier.value = [
+                                                    ...jobTypes,
+                                                    "parttime"
+                                                  ];
+                                                } else {
+                                                  jobTypes.remove('parttime');
+
+                                                  jobTypeNotifier.value = [
+                                                    ...jobTypes
+                                                  ];
+                                                }
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text(
+                                          "Part Time",
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 6,
+                                    ),
+                                    //Contract CheckBoxs
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        ValueListenableBuilder<List<String>>(
+                                          valueListenable: jobTypeNotifier,
+                                          builder: (context, jobTypes, _) {
+                                            final fullTimeChecked =
+                                                jobTypes.contains("contract");
+                                            return Checkbox(
+                                              value: fullTimeChecked,
+                                              onChanged: (isChecked) {
+                                                // final types =
+                                                //     jobTypeNotifier.value;
+                                                if (isChecked) {
+                                                  jobTypeNotifier.value = [
+                                                    ...jobTypes,
+                                                    "contract"
+                                                  ];
+                                                } else {
+                                                  jobTypes.remove('contract');
+
+                                                  jobTypeNotifier.value = [
+                                                    ...jobTypes
+                                                  ];
+                                                }
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text(
+                                          "Contract",
+                                        ),
+                                      ],
+                                    ),
+
+                                    SizedBox(
+                                      height: 6,
+                                    ),
+                                    //Internship CheckBoxs
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        ValueListenableBuilder<List<String>>(
+                                          valueListenable: jobTypeNotifier,
+                                          builder: (context, jobTypes, _) {
+                                            final fullTimeChecked =
+                                                jobTypes.contains("internship");
+                                            return Checkbox(
+                                              value: fullTimeChecked,
+                                              onChanged: (isChecked) {
+                                                // final types =
+                                                //     jobTypeNotifier.value;
+                                                if (isChecked) {
+                                                  jobTypeNotifier.value = [
+                                                    ...jobTypes,
+                                                    "internship"
+                                                  ];
+                                                } else {
+                                                  jobTypes.remove('internship');
+
+                                                  jobTypeNotifier.value = [
+                                                    ...jobTypes
+                                                  ];
+                                                }
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text(
+                                          "Internship",
+                                        ),
+                                      ],
+                                    ),
+
+                                    SizedBox(
+                                      height: 18,
+                                    ),
+                                    Divider(),
+                                    SizedBox(
+                                      height: 16,
                                     ),
                                     Text(
                                       "Salary",
@@ -441,271 +705,6 @@ class Jobs extends StatelessWidget {
                                     SizedBox(
                                       height: 18,
                                     ),
-                                    Divider(),
-                                    SizedBox(
-                                      height: 16,
-                                    ),
-
-                                    //Job Type Section
-                                    Text(
-                                      "Job Type",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 18,
-                                    ),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        ValueListenableBuilder<List<String>>(
-                                          valueListenable: jobTypeNotifier,
-                                          builder: (context, jobTypes, _) {
-                                            final fullTimeChecked =
-                                                jobTypes.contains("fulltime");
-                                            return Checkbox(
-                                              value: fullTimeChecked,
-                                              onChanged: (isChecked) {
-                                                // final types =
-                                                //     jobTypeNotifier.value;
-                                                if (isChecked) {
-                                                  jobTypeNotifier.value = [
-                                                    ...jobTypes,
-                                                    "fulltime"
-                                                  ];
-                                                } else {
-                                                  jobTypes.remove('fulltime');
-
-                                                  jobTypeNotifier.value = [
-                                                    ...jobTypes
-                                                  ];
-                                                }
-                                              },
-                                            );
-                                          },
-                                        ),
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text(
-                                          "Full Time",
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 6,
-                                    ),
-                                    //Part Time CheckBoxs
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        ValueListenableBuilder<List<String>>(
-                                          valueListenable: jobTypeNotifier,
-                                          builder: (context, jobTypes, _) {
-                                            final fullTimeChecked =
-                                                jobTypes.contains("parttime");
-                                            return Checkbox(
-                                              value: fullTimeChecked,
-                                              onChanged: (isChecked) {
-                                                // final types =
-                                                //     jobTypeNotifier.value;
-                                                if (isChecked) {
-                                                  jobTypeNotifier.value = [
-                                                    ...jobTypes,
-                                                    "parttime"
-                                                  ];
-                                                } else {
-                                                  jobTypes.remove('parttime');
-
-                                                  jobTypeNotifier.value = [
-                                                    ...jobTypes
-                                                  ];
-                                                }
-                                              },
-                                            );
-                                          },
-                                        ),
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text(
-                                          "Part Time",
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 6,
-                                    ),
-                                    //Contract CheckBoxs
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        ValueListenableBuilder<List<String>>(
-                                          valueListenable: jobTypeNotifier,
-                                          builder: (context, jobTypes, _) {
-                                            final fullTimeChecked =
-                                                jobTypes.contains("contract");
-                                            return Checkbox(
-                                              value: fullTimeChecked,
-                                              onChanged: (isChecked) {
-                                                // final types =
-                                                //     jobTypeNotifier.value;
-                                                if (isChecked) {
-                                                  jobTypeNotifier.value = [
-                                                    ...jobTypes,
-                                                    "contract"
-                                                  ];
-                                                } else {
-                                                  jobTypes.remove('contract');
-
-                                                  jobTypeNotifier.value = [
-                                                    ...jobTypes
-                                                  ];
-                                                }
-                                              },
-                                            );
-                                          },
-                                        ),
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text(
-                                          "Contract",
-                                        ),
-                                      ],
-                                    ),
-
-                                    SizedBox(
-                                      height: 6,
-                                    ),
-                                    //Internship CheckBoxs
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        ValueListenableBuilder<List<String>>(
-                                          valueListenable: jobTypeNotifier,
-                                          builder: (context, jobTypes, _) {
-                                            final fullTimeChecked =
-                                                jobTypes.contains("internship");
-                                            return Checkbox(
-                                              value: fullTimeChecked,
-                                              onChanged: (isChecked) {
-                                                // final types =
-                                                //     jobTypeNotifier.value;
-                                                if (isChecked) {
-                                                  jobTypeNotifier.value = [
-                                                    ...jobTypes,
-                                                    "internship"
-                                                  ];
-                                                } else {
-                                                  jobTypes.remove('internship');
-
-                                                  jobTypeNotifier.value = [
-                                                    ...jobTypes
-                                                  ];
-                                                }
-                                              },
-                                            );
-                                          },
-                                        ),
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text(
-                                          "Internship",
-                                        ),
-                                      ],
-                                    ),
-
-                                    SizedBox(
-                                      height: 18,
-                                    ),
-                                    Divider(),
-                                    SizedBox(
-                                      height: 16,
-                                    ),
-
-                                    //Job Type Section
-                                    Text(
-                                      "Categories",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 18,
-                                    ),
-                                    Container(
-                                      height: 40.0 * categories.length,
-                                      child: ListView.builder(
-                                        itemCount: categories.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return
-                                              //Categories CheckBoxs
-                                              Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 6.0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                ValueListenableBuilder<
-                                                    List<int>>(
-                                                  valueListenable:
-                                                      categoryNotifier,
-                                                  builder: (context,
-                                                      categoriesId, _) {
-                                                    final categoryChecked =
-                                                        categoriesId
-                                                            .contains(index);
-                                                    return Checkbox(
-                                                      value: categoryChecked,
-                                                      onChanged: (isChecked) {
-                                                        if (isChecked) {
-                                                          categoryNotifier
-                                                              .value = [
-                                                            ...categoriesId,
-                                                            index
-                                                          ];
-                                                        } else {
-                                                          categoriesId
-                                                              .remove(index);
-
-                                                          categoryNotifier
-                                                              .value = [
-                                                            ...categoriesId
-                                                          ];
-                                                        }
-                                                      },
-                                                    );
-                                                  },
-                                                ),
-                                                SizedBox(
-                                                  width: 4,
-                                                ),
-                                                Text(
-                                                  categories[index]
-                                                      .categoryName,
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    )
                                   ],
                                 ),
                               ),
@@ -717,7 +716,31 @@ class Jobs extends StatelessWidget {
                               flex: 4,
                               child: Container(
                                 color: Colors.white,
-                                child: JobList(),
+                                child: MultiValueListenableBuider(
+                                    valueListenables: [
+                                      fixedSalaryNotifier,
+                                      hourlySalaryNotifier,
+                                      remoteNotifier,
+                                      languageNotifier,
+                                      jobTypeNotifier,
+                                      categoryNotifier,
+                                      countryNotifier
+                                    ],
+                                    builder: (context, values, _) {
+                                      return JobList(
+                                        fixedSalaryNotifier:
+                                            fixedSalaryNotifier.value,
+                                        hourlySalaryNotifier:
+                                            hourlySalaryNotifier.value,
+                                        remoteNotifier: remoteNotifier.value,
+                                        languageNotifier:
+                                            languageNotifier.value,
+                                        jobTypeNotifier: jobTypeNotifier.value,
+                                        categoryNotifier:
+                                            categoryNotifier.value,
+                                        countryNotifier: countryNotifier.value,
+                                      );
+                                    }),
                               ),
                             )
                           ],

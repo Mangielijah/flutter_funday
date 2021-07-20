@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:country_pickers/country.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_funday_1/utils/authentication.dart';
 import 'package:flutter_funday_1/views/jobs/jobtile.dart';
 
 enum OrderBy {
@@ -12,7 +15,24 @@ extension OrderExt on OrderBy {
 
 class JobList extends StatelessWidget {
   final ValueNotifier<int> orderByNotifier = ValueNotifier(0);
-  JobList({Key key}) : super(key: key);
+  final bool fixedSalaryNotifier;
+  final bool hourlySalaryNotifier;
+  final bool remoteNotifier;
+  final List<String> languageNotifier;
+  final List<String> jobTypeNotifier;
+  final List<int> categoryNotifier;
+
+  final Country countryNotifier;
+  JobList({
+    Key key,
+    this.fixedSalaryNotifier,
+    this.hourlySalaryNotifier,
+    this.remoteNotifier,
+    this.languageNotifier,
+    this.jobTypeNotifier,
+    this.categoryNotifier,
+    this.countryNotifier,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -65,16 +85,56 @@ class JobList extends StatelessWidget {
         Divider(),
         Expanded(
           flex: 2,
-          child: ListView.builder(
-            itemCount: 20 * 2,
-            itemBuilder: (context, index) {
-              if (index.isOdd) return Divider();
-              final position = index ~/ 2;
-              return JobTile();
+          child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: query().snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final docList = snapshot.data.docs;
+                if (docList.isEmpty)
+                  return Container(
+                    child: Center(
+                      child: Text("No Job Found"),
+                    ),
+                  );
+                return ListView.builder(
+                  itemCount: docList.length * 2,
+                  itemBuilder: (context, index) {
+                    if (index.isOdd) return Divider();
+                    final position = index ~/ 2;
+
+                    final data = docList[position].data();
+                    return JobTile(data: data);
+                  },
+                );
+              }
+              if (snapshot.hasError) {
+                return Icon(
+                  Icons.cancel,
+                  color: Colors.white,
+                );
+              }
+              return CircularProgressIndicator(
+                backgroundColor: Colors.white,
+              );
             },
           ),
         )
       ],
     );
+  }
+
+  Query<Map<String, dynamic>> query() {
+    Query<Map<String, dynamic>> initQuery = firestore.collection("jobs");
+    // if(orderByNotifier.value)
+    if (categoryNotifier.isNotEmpty) {
+      initQuery =
+          initQuery.where("categories", arrayContainsAny: categoryNotifier);
+    }
+
+    // if(orderByNotifier.value)
+    // if (jobTypeNotifier.isNotEmpty) {
+    //   initQuery = initQuery.where("job_type", arrayContains: jobTypeNotifier);
+    // }
+    return initQuery;
   }
 }

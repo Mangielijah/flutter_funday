@@ -1,10 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
+FirebaseFirestore firestore = FirebaseFirestore.instance;
+FirebaseStorage storage = FirebaseStorage.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
 String uid;
@@ -14,20 +18,28 @@ String imageUrl;
 
 /// For checking if the user is already signed into the
 /// app using Google Sign In
-Future getUser() async {
+Future<bool> getUser() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool authSignedIn = prefs.getBool('auth') ?? false;
 
   final User user = _auth.currentUser;
-
-  if (authSignedIn == true) {
-    if (user != null) {
-      uid = user.uid;
-      name = user.displayName;
-      userEmail = user.email;
-      imageUrl = user.photoURL;
-    }
+  if (user != null) {
+    return authSignedIn;
+  } else {
+    return false;
   }
+
+  // if (authSignedIn == true) {
+  //   if (user != null) {
+  //     uid = user.uid;
+  //     name = user.displayName;
+  //     userEmail = user.email;
+  //     imageUrl = user.photoURL;
+  //     return user;
+  //   } else
+  //     return null;
+  // }
+  // ;
 }
 
 /// For authenticating user using Google Sign In

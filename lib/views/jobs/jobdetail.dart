@@ -1,21 +1,32 @@
-import 'dart:html';
-
 import 'package:badges/badges.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_funday_1/utils/authentication.dart';
+import 'package:flutter_funday_1/views/jobs/jobs.dart';
 import 'package:flutter_funday_1/widgets/button.dart';
 import 'package:flutter_funday_1/widgets/header.dart';
 import 'package:csc_picker/csc_picker.dart';
 
 class JobDetial extends StatelessWidget {
-  JobDetial({Key key}) : super(key: key);
+  final Map<String, dynamic> data;
+  JobDetial({Key key, this.data}) : super(key: key);
 
   final ValueNotifier<FilePickerResult> filePickerNotifier =
       ValueNotifier(null);
   final ValueNotifier<Map<String, dynamic>> cscNotifier = ValueNotifier({});
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final List<String> skills =
+        (data['skills'] as List).map((e) => e as String).toList();
+    final List<String> location =
+        (data['location'] as List).map((e) => e as String).toList();
+    final List<String> language =
+        (data['language'] as List).map((e) => e as String).toList();
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: Container(
@@ -33,7 +44,7 @@ class JobDetial extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Market Research (Agencies)",
+                    data['title'],
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 26,
@@ -73,7 +84,13 @@ class JobDetial extends StatelessWidget {
                                       color: Colors.white),
                                 ),
                                 TextSpan(
-                                  text: "20,000 XAF / monthly",
+                                  text: (data['salary_type'] == "fixed")
+                                      ? (data['salary'] != null)
+                                          ? "${data['salary']} XAF/monthly"
+                                          : 'Not Available'
+                                      : (data['salary'] != null)
+                                          ? "${data['salary']} XAF/hourly"
+                                          : 'Not Available',
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -103,7 +120,7 @@ class JobDetial extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 14.0, bottom: 14.0),
                       child: Text(
-                          "Freelancer  >  Jobs  >  Browse All Jobs  >  Programming & Tech"),
+                          "Freelancer  >  Jobs  >  Browse All Jobs  >  ${data['title']}"),
                     ),
                     Expanded(
                       child: Container(
@@ -132,18 +149,32 @@ class JobDetial extends StatelessWidget {
                                             fontSize: 18,
                                           ),
                                         ),
-                                        Badge(
-                                          badgeColor: Colors.blue[900],
-                                          shape: BadgeShape.square,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          badgeContent: Text(
-                                            "Remote",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
+                                        Container(
+                                          child: Wrap(
+                                            crossAxisAlignment:
+                                                WrapCrossAlignment.start,
+                                            runSpacing: 8.0,
+                                            spacing: 4.0,
+                                            children: location
+                                                .map(
+                                                  (String skill) => Badge(
+                                                    badgeColor:
+                                                        Colors.blue[900],
+                                                    shape: BadgeShape.square,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    badgeContent: Text(
+                                                      skill,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                                .toList(),
                                           ),
-                                        ),
+                                        )
                                         // Text(
                                         //   "Remote",
                                         //   style: TextStyle(
@@ -170,10 +201,7 @@ class JobDetial extends StatelessWidget {
                                                 WrapCrossAlignment.start,
                                             runSpacing: 8.0,
                                             spacing: 4.0,
-                                            children: [
-                                              "English",
-                                              "French",
-                                            ]
+                                            children: language
                                                 .map(
                                                   (String skill) => Badge(
                                                     badgeColor:
@@ -213,13 +241,7 @@ class JobDetial extends StatelessWidget {
                                                 WrapCrossAlignment.start,
                                             runSpacing: 8.0,
                                             spacing: 4.0,
-                                            children: [
-                                              "Data Entry",
-                                              "Internet Marketing",
-                                              "Market Research",
-                                              "Marketing",
-                                              "Research"
-                                            ]
+                                            children: skills
                                                 .map(
                                                   (String skill) => Badge(
                                                     badgeColor:
@@ -259,9 +281,7 @@ class JobDetial extends StatelessWidget {
                                       height: 12,
                                     ),
                                     Text(
-                                      """Hi Friends, We need help in building a database of agency emails so we can run some promotion actives. You will need to research online and find design, advertising, and marketing agencies then enter their name, email, and size ranking into a spread sheet provided. By size ranking I mean small, medium. Hi Friends, We need help in building a database of agency emails so we can run some promotion actives. You will need to research online and find design, advertising, and marketing agencies then enter their name, email, and size ranking into a spread sheet provided. By size ranking I mean small, medium.
-
-                                    Hi Friends, We need help in building a database of agency emails so we can run some promotion actives. You will need to research online and find design, advertising, and marketing agencies then enter their name, email, and size ranking into a spread sheet provided. By size ranking I mean small, medium. Hi Friends, We need help in building a database of agency emails so we can run some promotion actives. You will need to research online and find design, advertising, and marketing agencies then enter their name, email, and size ranking into a spread sheet provided. By size ranking I mean small, medium""",
+                                      data['description'],
                                       textAlign: TextAlign.justify,
                                       style: TextStyle(
                                         fontSize: 17,
@@ -287,6 +307,7 @@ class JobDetial extends StatelessWidget {
                                       height: 12,
                                     ),
                                     TextField(
+                                      controller: nameController,
                                       maxLines: 1,
                                       keyboardType: TextInputType.name,
                                       decoration: InputDecoration(
@@ -303,6 +324,7 @@ class JobDetial extends StatelessWidget {
                                       height: 12,
                                     ),
                                     TextField(
+                                      controller: emailController,
                                       maxLines: 1,
                                       keyboardType: TextInputType.emailAddress,
                                       decoration: InputDecoration(
@@ -319,6 +341,7 @@ class JobDetial extends StatelessWidget {
                                       height: 12,
                                     ),
                                     TextField(
+                                      controller: phoneController,
                                       maxLines: 1,
                                       keyboardType: TextInputType.phone,
                                       decoration: InputDecoration(
@@ -343,8 +366,9 @@ class JobDetial extends StatelessWidget {
                                           onCountryChanged: (value) {
                                             cscNotifier.value = {
                                               "country": value,
-                                              "state": cscMap['state'],
-                                              "city": cscMap['city']
+                                              "state":
+                                                  cscNotifier.value['state'],
+                                              "city": cscNotifier.value['city']
                                             };
                                           },
                                           onStateChanged: (value) {
@@ -352,9 +376,10 @@ class JobDetial extends StatelessWidget {
                                             //   stateValue = value;
                                             // });
                                             cscNotifier.value = {
-                                              "country": cscMap['country'],
+                                              "country":
+                                                  cscNotifier.value['country'],
                                               "state": value,
-                                              "city": cscMap['city']
+                                              "city": cscNotifier.value['city']
                                             };
                                           },
                                           onCityChanged: (value) {
@@ -362,8 +387,10 @@ class JobDetial extends StatelessWidget {
                                             //   cityValue = value;
                                             // });
                                             cscNotifier.value = {
-                                              "country": cscMap['country'],
-                                              "state": cscMap['city'],
+                                              "country":
+                                                  cscNotifier.value['country'],
+                                              "state":
+                                                  cscNotifier.value['state'],
                                               "city": value,
                                             };
                                           },
@@ -381,7 +408,7 @@ class JobDetial extends StatelessWidget {
                                           onTap: () {
                                             getInput();
                                           },
-                                          text: 'Input Cover Letter',
+                                          text: 'Click to upload your resume',
                                         ),
                                         SizedBox(
                                           width: 20,
@@ -416,7 +443,95 @@ class JobDetial extends StatelessWidget {
                                     SizedBox(
                                       height: 24,
                                     ),
-                                    Button(text: 'Submit')
+                                    Button(
+                                      text: 'Submit',
+                                      onTap: () async {
+                                        if (nameController.text.isNotEmpty &&
+                                            emailController.text.isNotEmpty &&
+                                            phoneController.text.isNotEmpty) {
+                                          if (cscNotifier.value['country'] !=
+                                                  null &&
+                                              cscNotifier.value['state'] !=
+                                                  null &&
+                                              cscNotifier.value['city'] !=
+                                                  null) {
+                                            if (filePickerNotifier
+                                                .value.files.isNotEmpty) {
+                                              PlatformFile file =
+                                                  filePickerNotifier
+                                                      .value.files[0];
+                                              Reference ref = storage
+                                                  .ref('resume/${file.name}');
+                                              try {
+                                                UploadTask task =
+                                                    ref.putData(file.bytes);
+                                                task.whenComplete(
+                                                  () async {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                            "Resume Uploaded successfully"),
+                                                      ),
+                                                    );
+                                                    String applicationId =
+                                                        firestore
+                                                            .collection("jobs")
+                                                            .doc()
+                                                            .id;
+                                                    String downloadURL =
+                                                        await ref
+                                                            .getDownloadURL();
+                                                    await firestore
+                                                        .collection("jobs")
+                                                        .doc(data['job_id'])
+                                                        .collection(
+                                                            "applications")
+                                                        .doc(applicationId)
+                                                        .set({
+                                                      "application_id":
+                                                          applicationId,
+                                                      "name":
+                                                          nameController.text,
+                                                      "email":
+                                                          emailController.text,
+                                                      "phone":
+                                                          phoneController.text,
+                                                      "country": cscNotifier
+                                                          .value['country'],
+                                                      "state": cscNotifier
+                                                          .value['state'],
+                                                      "city": cscNotifier
+                                                          .value['city'],
+                                                      "resume": downloadURL,
+                                                    }).then((value) {
+                                                      print("User Added");
+                                                      Navigator.of(context).push(
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      Jobs()));
+                                                    }).catchError((error) => print(
+                                                            "Failed to add user: $error"));
+                                                  },
+                                                );
+                                              } on FirebaseException catch (e) {
+                                                // e.g, e.code == 'canceled'
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      "Failed to upload resume"),
+                                                ));
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 24,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -522,7 +637,11 @@ class JobDetial extends StatelessWidget {
   }
 
   getInput() async {
-    filePickerNotifier.value = await FilePicker.platform.pickFiles();
+    filePickerNotifier.value = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'txt', 'doc', 'docx'],
+    );
     // return result;
   }
 }

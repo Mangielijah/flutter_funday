@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart';
+import 'package:flutter_funday_1/views/dashboard/applicants.dart';
 import 'package:flutter_funday_1/views/jobs/jobdetail.dart';
 import 'package:flutter_funday_1/widgets/button.dart';
 
 class JobTile extends StatelessWidget {
-  const JobTile({Key key}) : super(key: key);
+  final Map<String, dynamic> data;
+  const JobTile({Key key, this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final List<String> skills =
+        (data['skills'] as List).map((e) => e as String).toList();
     return Container(
       padding:
           const EdgeInsets.only(left: 64.0, right: 64.0, top: 24, bottom: 24),
@@ -26,7 +30,7 @@ class JobTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        "Market Research (Agencies)",
+                        data['title'],
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -47,7 +51,7 @@ class JobTile extends StatelessWidget {
                     height: 16,
                   ),
                   Text(
-                    """Hi Friends, We need help in building a database of agency emails so we can run some promotion actives. You will need to research online and find design, advertising, and marketing agencies then enter their name, email, and size ranking into a spread sheet provided. By size ranking I mean small, medium. Hi Friends, We need help in building a database of agency emails so we can run some promotion actives. You will need to research online and find design, advertising, and marketing agencies then enter their name, email, and size ranking into a spread sheet provided. By size ranking I mean small, medium""",
+                    data['description'],
                     style: TextStyle(
                       fontSize: 15,
                     ),
@@ -62,13 +66,7 @@ class JobTile extends StatelessWidget {
                       crossAxisAlignment: WrapCrossAlignment.start,
                       runSpacing: 8.0,
                       spacing: 4.0,
-                      children: [
-                        "Data Entry",
-                        "Internet Marketing",
-                        "Market Research",
-                        "Marketing",
-                        "Research"
-                      ]
+                      children: skills
                           .map(
                             (String skill) => Badge(
                               badgeColor: Colors.blue[900],
@@ -109,7 +107,13 @@ class JobTile extends StatelessWidget {
                   height: 6,
                 ),
                 Text(
-                  "20,000 XAF/monthly",
+                  (data['salary_type'] == "fixed")
+                      ? (data['salary'] != null)
+                          ? "${data['salary']} XAF/monthly"
+                          : 'Not Available'
+                      : (data['salary'] != null)
+                          ? "${data['salary']} XAF/hourly"
+                          : 'Not Available',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -125,7 +129,7 @@ class JobTile extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => JobDetial(),
+                        builder: (context) => JobDetial(data: data),
                       ),
                     );
                   },

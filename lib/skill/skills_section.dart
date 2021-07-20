@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SkillSection extends StatelessWidget {
+  final ValueNotifier<List<String>> notifier;
+  const SkillSection({this.notifier});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,7 +23,7 @@ class SkillSection extends StatelessWidget {
           SizedBox(
             height: 12,
           ),
-          SkillPanel()
+          SkillPanel(skillNotifier: notifier)
         ],
       ),
     );
@@ -62,8 +64,10 @@ class SubtitleText extends StatelessWidget {
 }
 
 class SkillPanel extends StatelessWidget {
-  final ValueNotifier<List<String>> skillNotifier = ValueNotifier([]);
+  // final ValueNotifier<List<String>> skillNotifier = ValueNotifier([]);
   final TextEditingController controller = TextEditingController();
+  final ValueNotifier<List<String>> skillNotifier;
+  SkillPanel({this.skillNotifier});
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {

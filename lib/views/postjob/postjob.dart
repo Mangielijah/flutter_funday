@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_picker_dialog.dart';
 import 'package:country_pickers/utils/utils.dart';
@@ -9,12 +10,14 @@ import 'package:flutter_funday_1/next_button.dart';
 import 'package:flutter_funday_1/skill/skills_section.dart';
 import 'package:flutter_funday_1/strings.dart';
 import 'package:flutter_funday_1/text_input.dart';
+import 'package:flutter_funday_1/utils/authentication.dart';
+import 'package:flutter_funday_1/views/dashboard/dashboard.dart';
 import 'package:flutter_funday_1/widgets/button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PostJob extends StatelessWidget {
   final ValueNotifier<List<int>> categoryNotifier = ValueNotifier([]);
-  final ValueNotifier<bool> fixedSalaryNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> salaryTypeNotifier = ValueNotifier(false);
   final ValueNotifier<bool> hourlySalaryNotifier = ValueNotifier(false);
   final ValueNotifier<bool> remoteNotifier = ValueNotifier(false);
   final ValueNotifier<List<String>> languageNotifier =
@@ -23,6 +26,11 @@ class PostJob extends StatelessWidget {
       ValueNotifier(['fulltime']);
   final ValueNotifier<Country> countryNotifier =
       ValueNotifier(CountryPickerUtils.getCountryByIsoCode('CM'));
+  final ValueNotifier<List<String>> skillNotifier = ValueNotifier([]);
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descController = TextEditingController();
+  final TextEditingController minSalary = TextEditingController();
+  final TextEditingController maxSalary = TextEditingController();
 
   PostJob({Key key}) : super(key: key);
   @override
@@ -92,6 +100,7 @@ class PostJob extends StatelessWidget {
                             child: ListView(
                               children: [
                                 TextInputWidget(
+                                  controller: titleController,
                                   textType: TextType.text,
                                   title: Strings.whatDoYouWantBuild,
                                   hint: "e.g Build me a Website",
@@ -165,6 +174,7 @@ class PostJob extends StatelessWidget {
                                   ),
                                 ),
                                 TextInputWidget(
+                                  controller: descController,
                                   textType: TextType.textarea,
                                   title: "Tell us more about your project",
                                   subtitle:
@@ -195,7 +205,9 @@ class PostJob extends StatelessWidget {
                                   },
                                 ),
                                 Consumer(
-                                  child: SkillSection(),
+                                  child: SkillSection(
+                                    notifier: skillNotifier,
+                                  ),
                                   builder: (context, watch, child) {
                                     List<String> listState =
                                         watch(listStateProvider);
@@ -253,13 +265,13 @@ class PostJob extends StatelessWidget {
                                           children: [
                                             ValueListenableBuilder(
                                               valueListenable:
-                                                  fixedSalaryNotifier,
+                                                  salaryTypeNotifier,
                                               builder: (context,
                                                   fixedSalaryEnabled, _) {
                                                 return Checkbox(
                                                   value: fixedSalaryEnabled,
                                                   onChanged: (isChecked) {
-                                                    fixedSalaryNotifier.value =
+                                                    salaryTypeNotifier.value =
                                                         isChecked;
                                                   },
                                                 );
@@ -282,13 +294,14 @@ class PostJob extends StatelessWidget {
                                           children: [
                                             //min fixed price
                                             Expanded(
-                                              flex: 2,
                                               child: TextField(
+                                                controller: minSalary,
                                                 maxLines: 1,
                                                 keyboardType:
                                                     TextInputType.number,
                                                 decoration: InputDecoration(
-                                                  hintText: "min",
+                                                  hintText:
+                                                      "Enter amount value per month",
                                                   border: OutlineInputBorder(
                                                     borderRadius:
                                                         BorderRadius.zero,
@@ -299,30 +312,31 @@ class PostJob extends StatelessWidget {
                                                 ),
                                               ),
                                             ),
-                                            Expanded(
-                                              child: Center(
-                                                child: Text("to"),
-                                              ),
-                                            ),
-                                            //max fixed Price
-                                            Expanded(
-                                              flex: 2,
-                                              child: TextField(
-                                                maxLines: 1,
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                decoration: InputDecoration(
-                                                  hintText: "max",
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.zero,
-                                                    borderSide: BorderSide(
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
+                                            // Expanded(
+                                            //   child: Center(
+                                            //     child: Text("to"),
+                                            //   ),
+                                            // ),
+                                            // //max fixed Price
+                                            // Expanded(
+                                            //   flex: 2,
+                                            //   child: TextField(
+                                            //     controller: maxSalary,
+                                            //     maxLines: 1,
+                                            //     keyboardType:
+                                            //         TextInputType.number,
+                                            //     decoration: InputDecoration(
+                                            //       hintText: "max",
+                                            //       border: OutlineInputBorder(
+                                            //         borderRadius:
+                                            //             BorderRadius.zero,
+                                            //         borderSide: BorderSide(
+                                            //           color: Colors.grey,
+                                            //         ),
+                                            //       ),
+                                            //     ),
+                                            //   ),
+                                            // ),
                                           ],
                                         ),
 
@@ -695,7 +709,64 @@ class PostJob extends StatelessWidget {
                                           height: 16,
                                         ),
                                         Button(
-                                          text: 'Submit',
+                                          text: 'Create Job',
+                                          onTap: () async {
+                                            if (titleController
+                                                    .text.isNotEmpty &&
+                                                descController
+                                                    .text.isNotEmpty &&
+                                                minSalary.text.isNotEmpty) {
+                                              if (categoryNotifier
+                                                      .value.isNotEmpty &&
+                                                  jobTypeNotifier
+                                                      .value.isNotEmpty &&
+                                                  languageNotifier
+                                                      .value.isNotEmpty) {
+                                                debugPrint("Creating Job");
+                                                String jobId = firestore
+                                                    .collection("jobs")
+                                                    .doc()
+                                                    .id;
+                                                await firestore
+                                                    .collection("jobs")
+                                                    .doc(jobId)
+                                                    .set({
+                                                  'job_id': jobId,
+                                                  'title': titleController
+                                                      .text, // John Doe
+                                                  "description":
+                                                      descController.text,
+                                                  "categories":
+                                                      categoryNotifier.value,
+                                                  "skills": skillNotifier.value,
+                                                  "salary_type":
+                                                      (salaryTypeNotifier.value)
+                                                          ? 'fixed'
+                                                          : 'hourly',
+                                                  "salary": minSalary.text,
+                                                  "timestamp": Timestamp.now()
+                                                      .millisecondsSinceEpoch,
+                                                  "location": [
+                                                    countryNotifier.value.name,
+                                                    if (remoteNotifier.value)
+                                                      "remote",
+                                                  ],
+                                                  "employer_id": uid,
+                                                  "job_type":
+                                                      jobTypeNotifier.value,
+                                                  "language":
+                                                      languageNotifier.value,
+                                                }).then((value) {
+                                                  print("User Added");
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              Dashboard()));
+                                                }).catchError((error) => print(
+                                                        "Failed to add user: $error"));
+                                              }
+                                            }
+                                          },
                                         ),
                                       ],
                                     ),

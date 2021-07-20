@@ -10,10 +10,12 @@ class TextInputWidget extends StatelessWidget {
   final String subtitle;
   final TextType textType;
   final String hint;
+  final TextEditingController controller;
   const TextInputWidget({
     Key key,
     @required this.title,
     this.subtitle,
+    this.controller,
     @required this.hint,
     @required this.textType,
   }) : super(key: key);
@@ -42,6 +44,7 @@ class TextInputWidget extends StatelessWidget {
           ),
           if (this.textType == TextType.text)
             TextField(
+              controller: controller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: this.hint,
@@ -50,6 +53,7 @@ class TextInputWidget extends StatelessWidget {
             ),
           if (this.textType == TextType.textarea)
             TextField(
+              controller: controller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: this.hint,

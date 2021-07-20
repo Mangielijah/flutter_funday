@@ -7,13 +7,15 @@
         {
             "name": "flutter_funday_1",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": ["--web-port", "8080"]
         },
         {
             "name": "flutter_funday_1 (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
+            
         }
     ]
 }

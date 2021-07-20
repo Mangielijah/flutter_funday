@@ -1,9 +1,12 @@
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_funday_1/utils/authentication.dart';
+import 'package:flutter_funday_1/views/dashboard/dashboard.dart';
 import 'package:flutter_funday_1/widgets/button.dart';
 
 class AboutCompany extends StatelessWidget {
   final ValueNotifier<Map<String, dynamic>> cscNotifier = ValueNotifier({});
+  TextEditingController bizNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -40,6 +43,7 @@ class AboutCompany extends StatelessWidget {
               ),
               TextField(
                 maxLines: 1,
+                controller: bizNameController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   hintText: "Company Name",
@@ -67,23 +71,21 @@ class AboutCompany extends StatelessWidget {
               ValueListenableBuilder(
                 valueListenable: cscNotifier,
                 builder: (context, cscMap, _) {
+                  print(cscMap);
                   return CSCPicker(
                     defaultCountry: DefaultCountry.Cameroon,
                     onCountryChanged: (value) {
                       cscNotifier.value = {
-                        "country": value,
-                        "state": cscMap['state'],
-                        "city": cscMap['city']
+                        "country": value ?? DefaultCountry.Cameroon,
+                        "state": cscNotifier.value['state'],
+                        "city": cscNotifier.value['city']
                       };
                     },
                     onStateChanged: (value) {
-                      // setState(() {
-                      //   stateValue = value;
-                      // });
                       cscNotifier.value = {
-                        "country": cscMap['country'],
+                        "country": cscNotifier.value['country'],
                         "state": value,
-                        "city": cscMap['city']
+                        "city": cscNotifier.value['city']
                       };
                     },
                     onCityChanged: (value) {
@@ -91,8 +93,8 @@ class AboutCompany extends StatelessWidget {
                       //   cityValue = value;
                       // });
                       cscNotifier.value = {
-                        "country": cscMap['country'],
-                        "state": cscMap['city'],
+                        "country": cscNotifier.value['country'],
+                        "state": cscNotifier.value['state'],
                         "city": value,
                       };
                     },
@@ -122,7 +124,21 @@ class AboutCompany extends StatelessWidget {
                 bgColor: Colors.blue,
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
-                onTap: () async {},
+                onTap: () async {
+                  if (bizNameController.text.isNotEmpty) {
+                    firestore.collection("users").doc(uid).set({
+                      'business_name': bizNameController.text, // John Doe
+                      "country": cscNotifier.value['country'],
+                      "state": cscNotifier.value['state'],
+                      "city": cscNotifier.value['city'],
+                    }).then((value) {
+                      print("User Added");
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => Dashboard()));
+                    }).catchError(
+                        (error) => print("Failed to add user: $error"));
+                  }
+                },
               ),
               SizedBox(
                 height: 20,

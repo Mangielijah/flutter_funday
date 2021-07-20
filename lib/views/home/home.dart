@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_funday_1/logo.dart';
+import 'package:flutter_funday_1/utils/authentication.dart';
 import 'package:flutter_funday_1/views/authentication/signin.dart';
 import 'package:flutter_funday_1/views/authentication/signup.dart';
+import 'package:flutter_funday_1/views/dashboard/dashboard.dart';
 import 'package:flutter_funday_1/views/jobs/jobs.dart';
 import 'package:flutter_funday_1/views/postjob/postjob.dart';
 import 'package:flutter_funday_1/widgets/button.dart';
@@ -63,33 +65,61 @@ class Home extends StatelessWidget {
                   Container(
                     child: Row(
                       children: [
-                        Button(
-                          text: "Log In",
-                          bgColor: Colors.transparent,
-                          textColor: Colors.black,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => LogIn(),
+                        (uid != null)
+                            ? Container(
+                                child: Button(
+                                  text: "Dashboard",
+                                  bgColor: Colors.transparent,
+                                  textColor: Colors.black,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => Dashboard(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
+                            : Container(
+                                child: Row(
+                                  children: [
+                                    Button(
+                                      text: "Log In",
+                                      bgColor: Colors.transparent,
+                                      textColor: Colors.black,
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => LogIn(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Button(
+                                      text: "Sign Up",
+                                      bgColor: Colors.transparent,
+                                      textColor: Colors.black,
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => SignUp(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    // Button(
+                                    //   text: "I Want To Hire",
+                                    //   bgColor: Colors.orange,
+                                    // ),
+                                  ],
+                                ),
                               ),
-                            );
-                          },
-                        ),
-                        SizedBox(
-                          width: 4,
-                        ),
-                        Button(
-                          text: "Sign Up",
-                          bgColor: Colors.transparent,
-                          textColor: Colors.black,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => SignUp(),
-                              ),
-                            );
-                          },
-                        ),
                         SizedBox(
                           width: 4,
                         ),
@@ -97,11 +127,17 @@ class Home extends StatelessWidget {
                           text: "I Want To Hire",
                           bgColor: Colors.orange,
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PostJob(),
-                              ),
-                            );
+                            if (uid != null)
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => Dashboard(),
+                                ),
+                              );
+                            else
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => LogIn()),
+                              );
                           },
                         ),
                       ],

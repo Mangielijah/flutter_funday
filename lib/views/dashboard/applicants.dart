@@ -3,13 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_funday_1/logo.dart';
 import 'package:flutter_funday_1/utils/authentication.dart';
-import 'package:flutter_funday_1/views/dashboard/applicants.dart';
-import 'package:flutter_funday_1/views/jobs/jobtile.dart';
-import 'package:flutter_funday_1/views/postjob/postjob.dart';
 import 'package:flutter_funday_1/widgets/button.dart';
+import 'dart:html' as html;
 
-class Dashboard extends StatelessWidget {
-  const Dashboard({Key key}) : super(key: key);
+class Applicants extends StatelessWidget {
+  final Map<String, dynamic> data;
+  const Applicants({
+    Key key,
+    this.data,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -80,8 +82,8 @@ class Dashboard extends StatelessWidget {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => PostJob()));
+                        // Navigator.of(context).push(
+                        //     MaterialPageRoute(builder: (context) => PostJob()));
                       },
                       child: Container(
                         color: Colors.blue,
@@ -92,7 +94,7 @@ class Dashboard extends StatelessWidget {
                               Icon(
                                 Icons.add,
                                 size: 50,
-                                color: Colors.white,
+                                color: Colors.blue,
                               ),
                               SizedBox(
                                 height: 10,
@@ -101,7 +103,7 @@ class Dashboard extends StatelessWidget {
                                 "Create New Job",
                                 style: TextStyle(
                                   fontSize: 30,
-                                  color: Colors.white,
+                                  color: Colors.blue,
                                 ),
                               )
                             ],
@@ -125,7 +127,8 @@ class Dashboard extends StatelessWidget {
                                       QuerySnapshot<Map<String, dynamic>>>(
                                   future: firestore
                                       .collection("jobs")
-                                      .where("employer_id", isEqualTo: uid)
+                                      .doc(data['job_id'])
+                                      .collection('applications')
                                       .get(),
                                   builder: (context, snapshot) {
                                     if (snapshot.hasData) {
@@ -151,7 +154,7 @@ class Dashboard extends StatelessWidget {
                                 height: 10,
                               ),
                               Text(
-                                "Total Jobs",
+                                "Applicant's",
                                 style: TextStyle(
                                   fontSize: 30,
                                   color: Colors.white,
@@ -202,7 +205,8 @@ class Dashboard extends StatelessWidget {
               child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                   stream: firestore
                       .collection("jobs")
-                      .where("employer_id", isEqualTo: uid)
+                      .doc(data['job_id'])
+                      .collection('applications')
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
@@ -213,9 +217,6 @@ class Dashboard extends StatelessWidget {
                           if (index.isOdd) return Divider();
                           final position = index ~/ 2;
                           final data = docList[position].data();
-                          final List<String> skills = (data['skills'] as List)
-                              .map((e) => e as String)
-                              .toList();
                           return Container(
                             padding: const EdgeInsets.only(
                                 left: 64.0, right: 64.0, top: 24, bottom: 24),
@@ -237,7 +238,7 @@ class Dashboard extends StatelessWidget {
                                               MainAxisAlignment.start,
                                           children: [
                                             Text(
-                                              data['title'],
+                                              data['name'],
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 18,
@@ -247,7 +248,7 @@ class Dashboard extends StatelessWidget {
                                               width: 6,
                                             ),
                                             Text(
-                                              "6 days left",
+                                              "6 days ago",
                                               style: TextStyle(
                                                 fontSize: 15,
                                               ),
@@ -257,16 +258,61 @@ class Dashboard extends StatelessWidget {
                                         SizedBox(
                                           height: 16,
                                         ),
-                                        Text(
-                                          data['description'],
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                          ),
-                                          maxLines: 3,
-                                          overflow: TextOverflow.ellipsis,
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Email: ",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                            Container(
+                                              child: Badge(
+                                                badgeColor: Colors.blue[900],
+                                                shape: BadgeShape.square,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                badgeContent: Text(
+                                                  data['email'],
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                         SizedBox(
-                                          height: 16,
+                                          height: 12,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Phone Number: ",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                            Container(
+                                              child: Badge(
+                                                badgeColor: Colors.blue[900],
+                                                shape: BadgeShape.square,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                badgeContent: Text(
+                                                  data['phone'],
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 12,
                                         ),
                                         Container(
                                           child: Wrap(
@@ -274,7 +320,11 @@ class Dashboard extends StatelessWidget {
                                                 WrapCrossAlignment.start,
                                             runSpacing: 8.0,
                                             spacing: 4.0,
-                                            children: skills
+                                            children: <String>[
+                                              data['city'],
+                                              data['state'],
+                                              data['country'],
+                                            ]
                                                 .map(
                                                   (String skill) => Badge(
                                                     badgeColor:
@@ -301,89 +351,12 @@ class Dashboard extends StatelessWidget {
                                 SizedBox(
                                   width: 24,
                                 ),
-                                Container(
-                                  width: 150,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Salary",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 6,
-                                      ),
-                                      Text(
-                                        (data['salary_type'] == "fixed")
-                                            ? (data['salary'] != null)
-                                                ? "${data['salary']} XAF/monthly"
-                                                : 'Not Available'
-                                            : (data['salary'] != null)
-                                                ? "${data['salary']} XAF/hourly"
-                                                : 'Not Available',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 12,
-                                      ),
-                                      Button(
-                                        text: "Manage Job",
-                                        bgColor: Colors.blue[600],
-                                        textColor: Colors.white,
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => Applicants(
-                                                data: data,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Button(
-                                            text: "Edit",
-                                            bgColor: Colors.green[600],
-                                            textColor: Colors.white,
-                                            onTap: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Applicants(data: data),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                          Button(
-                                            text: "Delete",
-                                            bgColor: Colors.red[600],
-                                            textColor: Colors.white,
-                                            onTap: () async {
-                                              await firestore
-                                                  .collection("jobs")
-                                                  .doc(data["job_id"])
-                                                  .delete();
-                                            },
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                )
+                                Button(
+                                  text: "View Resume",
+                                  onTap: () async {
+                                    html.window.open(data['resume'], "_blank");
+                                  },
+                                ),
                               ],
                             ),
                           );
